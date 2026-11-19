@@ -186,6 +186,10 @@ const year = new Date().getFullYear();
 					)
 				}
 				<div class="site-header__actions">
+					<a href="tel:0825028010" class="header-phone">
+    					<span>電話</span>
+    					<strong>082-502-8010</strong>
+					</a>
 					<div class="site-search" role="search" aria-label="Site">
 						<svg
 							class="site-search__icon"
@@ -1134,7 +1138,25 @@ const year = new Date().getFullYear();
 				gap: var(--spacing-2);
 				margin-inline-start: auto;
 			}
+.header-phone {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--color-text);
+    text-decoration: none;
+    white-space: nowrap;
+}
 
+.header-phone span {
+    font-size: 12px;
+    color: #7acb28;
+}
+
+.header-phone strong {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+}
 			.site-search {
 				position: relative;
 				width: var(--search-input-width);
