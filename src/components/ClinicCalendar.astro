@@ -1,0 +1,88 @@
+
+---
+const days = [
+  { day: "月", am: "院長・副院長", pm: "院長" },
+  { day: "火", am: "院長・副院長", pm: "院長" },
+  { day: "水", am: "院長・副院長", pm: "院長" },
+  { day: "木", am: "院長", pm: "休診" },
+  { day: "金", am: "院長・副院長", pm: "院長" },
+  { day: "土", am: "院長・副院長", pm: "休診" },
+  { day: "日", am: "休診", pm: "休診" },
+];
+---
+
+<section class="clinic-calendar">
+  <h2>診療時間・担当医</h2>
+  <p>通常の診療担当</p>
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>時間帯</th>
+          {days.map((d) => <th>{d.day}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>午前</th>
+          {days.map((d) => <td>{d.am}</td>)}
+        </tr>
+        <tr>
+          <th>午後</th>
+          {days.map((d) => <td>{d.pm}</td>)}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="note">
+    日曜・祝日は原則休診です。
+    休日当番や臨時の診療変更は別途お知らせします。
+  </p>
+</section>
+
+<style>
+  .clinic-calendar {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  .clinic-calendar h2 {
+    font-size: 1.8rem;
+    margin-bottom: 16px;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    margin-top: 20px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+    text-align: center;
+  }
+
+  th, td {
+    border: 1px solid #ddd;
+    padding: 14px 8px;
+    font-size: 0.9rem;
+  }
+
+  thead th {
+    background: #f3f5f1;
+  }
+
+  tbody th {
+    background: #f8f8f8;
+  }
+
+  .note {
+    margin-top: 16px;
+    color: #666;
+    font-size: 0.85rem;
+  }
+</style>
