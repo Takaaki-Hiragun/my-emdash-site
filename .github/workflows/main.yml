@@ -1,0 +1,31 @@
+name: Verify clinic homepage
+
+on:
+  push:
+    branches: [verify-clinic-home-notices]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: af2b6558bc8788953d0495a5e3b12b8bb4df04d6
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install dependencies
+        id: dependencies
+        run: |
+          npm install --global pnpm@11.9.0
+          pnpm install --no-frozen-lockfile
+      - name: Type check
+        run: pnpm typecheck
+      - name: Build
+        if: "${{ !cancelled() && steps.dependencies.outcome == 'success' }}"
+        run: pnpm build
