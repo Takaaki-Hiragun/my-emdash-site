@@ -18,7 +18,7 @@ const getDateKey = (value: unknown): string | null => {
   if (Number.isNaN(date.getTime())) return null;
 
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "UTC",
+    timeZone: "Asia/Tokyo",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
