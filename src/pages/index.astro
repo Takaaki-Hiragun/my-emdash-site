@@ -15,24 +15,44 @@ import { resolveBlogSiteIdentity } from "../utils/site-identity";
 // instead of fetching every post and discarding the tail in JS.
 const POSTS_PER_PAGE = 7;
 
-const [{ entries: posts, cacheHint }, settings, notices] = await Promise.all([
+const [{ entries: posts, cacheHint }, settings, notices, scheduleChanges] = await Promise.all([
 	getEmDashCollection("posts", {
 		orderBy: { published_at: "desc" },
 		limit: POSTS_PER_PAGE + 1, // +1 to detect "view all" need
 	}),
 	getSiteSettings(),
-	getEmDashCollection("notices", {
-		status: "published",
-		orderBy: { published_at: "desc" },
-	}),
-]);
+	
+    getEmDashCollection("notices", {
+      status: "published",
+      orderBy: { published_at: "desc" },
+    }),
+    getEmDashCollection("schedule_changes", {
+      status: "published",
+    }),
+  ]);
+
 const { siteTitle, siteTagline } = resolveBlogSiteIdentity(settings);
 
+
 if (notices.error) console.error("Failed to load notices:", notices.error);
-if (Astro.cache?.enabled) {
-	const tags = new Set([...(cacheHint.tags ?? []), ...(notices.cacheHint.tags ?? [])]);
-	Astro.cache.set(notices.error ? false : { ...cacheHint, tags: [...tags] });
+if (scheduleChanges.error) {
+  console.error("Failed to load schedule changes:", scheduleChanges.error);
 }
+
+if (Astro.cache?.enabled) {
+  const tags = new Set([
+    ...(cacheHint.tags ?? []),
+    ...(notices.cacheHint.tags ?? []),
+    ...(scheduleChanges.cacheHint.tags ?? []),
+  ]);
+
+  Astro.cache.set(
+    notices.error || scheduleChanges.error
+      ? false
+      : { ...cacheHint, tags: [...tags] }
+  );
+}
+
 
 const noticeDateFormat = new Intl.DateTimeFormat("ja-JP", {
 	dateStyle: "long",
@@ -129,7 +149,9 @@ const gridPostsWithTags = gridPosts.map((post) => ({
 			</a>
 		</div>
 	</header>
-	<ClinicCalendar />
+	
+<ClinicCalendar scheduleChanges={scheduleChanges.entries} />
+
 	<section class="band section" aria-labelledby="clinic-notices">
 		<div class="frame">
 			<div class="section-head">
