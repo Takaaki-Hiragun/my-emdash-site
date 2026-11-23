@@ -1,5 +1,72 @@
 
 ---
+
+interface Props {
+  scheduleChanges?: Array<{
+    data: Record<string, unknown>;
+  }>;
+}
+
+const { scheduleChanges = [] } = Astro.props;
+
+const getDateKey = (value: unknown): string | null => {
+  if (typeof value !== "string" && !(value instanceof Date)) {
+    return null;
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Tokyo",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(date);
+
+  const get = (type: string) =>
+    parts.find((part) => part.type === type)?.value;
+
+  return `${get("year")}-${get("month")}-${get("day")}`;
+};
+
+type CalendarChange = {
+  target: string;
+  changeType: string;
+  note: string;
+};
+
+const changesByDate = new Map<string, CalendarChange[]>();
+
+for (const entry of scheduleChanges) {
+  const data = entry.data;
+  const dateKey = getDateKey(data.change_date);
+
+  if (!dateKey) continue;
+
+  const target =
+    typeof data.target === "string" ? data.target : "";
+  const changeType =
+    typeof data.change_type === "string" ? data.change_type : "";
+  const note =
+    typeof data.note === "string" ? data.note : "";
+
+  if (!target || !changeType) continue;
+
+  const changes = changesByDate.get(dateKey) ?? [];
+  changes.push({ target, changeType, note });
+  changesByDate.set(dateKey, changes);
+}
+
+const getChangesForDay = (
+  year: number,
+  month: number,
+  day: number
+): CalendarChange[] => {
+  const key = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return changesByDate.get(key) ?? [];
+};
+
 const days = [
   { day: "月", am: "院長・副院長", pm: "院長" },
   { day: "火", am: "院長・副院長", pm: "院長" },
@@ -158,6 +225,20 @@ const nextCalendarCells = Array.from(
   <div class="monthly-calendar-day">
     {day ?? ""}
 
+{day !== null &&
+  getChangesForDay(currentYear, currentMonth, day).map(
+    (change) => (
+      <div class="calendar-change">
+        {change.target}：{change.changeType}
+        {change.note && (
+          <div class="calendar-change-note">
+            {change.note}
+          </div>
+        )}
+      </div>
+    )
+  )}
+
     {day !== null &&
       (index % 7 === 0 ||
         getHolidayName(currentYear, currentMonth, day)) && (
@@ -183,6 +264,20 @@ const nextCalendarCells = Array.from(
 {nextCalendarCells.map((day, index) => (
   <div class="monthly-calendar-day">
     {day ?? ""}
+
+{day !== null &&
+  getChangesForDay(nextYear, nextMonth, day).map(
+    (change) => (
+      <div class="calendar-change">
+        {change.target}：{change.changeType}
+        {change.note && (
+          <div class="calendar-change-note">
+            {change.note}
+          </div>
+        )}
+      </div>
+    )
+  )}
 
     {day !== null &&
       (index % 7 === 0 ||
@@ -344,6 +439,34 @@ const nextCalendarCells = Array.from(
     .calendar-closed {
       font-size: 0.7rem;
       margin-top: 4px;
+    }
+  }
+
+  /* 診療予定変更の表示 */
+  .calendar-change {
+    margin-top: 6px;
+    padding: 6px 8px;
+    background: #eaf2fa;
+    border-left: 3px solid #5683ad;
+    border-radius: 4px;
+    color: #285477;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .calendar-change-note {
+    margin-top: 4px;
+    font-size: 0.75rem;
+    font-weight: normal;
+    color: #45657d;
+  }
+
+  @media (max-width: 600px) {
+    .calendar-change {
+      padding: 4px;
+      font-size: 0.7rem;
     }
   }
 
