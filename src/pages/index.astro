@@ -8,6 +8,7 @@ import {
 import { PortableText } from "emdash/ui";
 import Base from "../layouts/Base.astro";
 import PostCard from "../components/PostCard.astro";
+import ClinicCalendar from "../components/ClinicCalendar.astro";
 import { resolveBlogSiteIdentity } from "../utils/site-identity";
 
 // Limit to what we render (1 featured + 6 grid). The DB does the slicing
@@ -128,7 +129,7 @@ const gridPostsWithTags = gridPosts.map((post) => ({
 			</a>
 		</div>
 	</header>
-
+	<ClinicCalendar />
 	<section class="band section" aria-labelledby="clinic-notices">
 		<div class="frame">
 			<div class="section-head">
