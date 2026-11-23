@@ -9,6 +9,33 @@ const days = [
   { day: "土", am: "院長・副院長", pm: "休診" },
   { day: "日", am: "休診", pm: "休診" },
 ];
+
+const dateParts = new Intl.DateTimeFormat("ja-JP", {
+  timeZone: "Asia/Tokyo",
+  year: "numeric",
+  month: "numeric",
+}).formatToParts(new Date());
+
+const currentYear = Number(
+  dateParts.find((p) => p.type === "year")?.value
+);
+const currentMonth = Number(
+  dateParts.find((p) => p.type === "month")?.value
+);
+
+const firstWeekday = new Date(
+  Date.UTC(currentYear, currentMonth - 1, 1)
+).getUTCDay();
+
+const daysInMonth = new Date(
+  Date.UTC(currentYear, currentMonth, 0)
+).getUTCDate();
+
+const calendarCells = Array.from(
+  { length: firstWeekday + daysInMonth },
+  (_, i) => i < firstWeekday ? null : i - firstWeekday + 1
+);
+
 ---
 
 <section class="clinic-calendar">
@@ -40,6 +67,23 @@ const days = [
     日曜・祝日は原則休診です。
     休日当番や臨時の診療変更は別途お知らせします。
   </p>
+
+  <div class="monthly-calendar">
+    <h3>{currentYear}年{currentMonth}月の診療カレンダー</h3>
+
+    <div class="monthly-calendar-grid">
+      {["日", "月", "火", "水", "木", "金", "土"].map((day) => (
+        <div class="monthly-calendar-weekday">{day}</div>
+      ))}
+
+      {calendarCells.map((day) => (
+        <div class="monthly-calendar-day">
+          {day ?? ""}
+        </div>
+      ))}
+    </div>
+  </div>
+
 </section>
 
 <style>
@@ -85,4 +129,57 @@ const days = [
     color: #666;
     font-size: 0.85rem;
   }
+
+  /* 月間診療カレンダー */
+  .monthly-calendar {
+    margin-top: 40px;
+  }
+
+  .monthly-calendar h3 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+
+  .monthly-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+  }
+
+  .monthly-calendar-weekday {
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 0;
+    background: #f3f5f1;
+  }
+
+  .monthly-calendar-day {
+    min-height: 70px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+  }
+
+  .monthly-calendar-day:empty {
+    background: #f8f8f8;
+  }
+
+  @media (max-width: 600px) {
+    .monthly-calendar-grid {
+      gap: 2px;
+    }
+
+    .monthly-calendar-day {
+      min-height: 48px;
+      padding: 5px;
+      font-size: 0.8rem;
+    }
+
+    .monthly-calendar-weekday {
+      padding: 8px 0;
+      font-size: 0.8rem;
+    }
+  }
+
 </style>
