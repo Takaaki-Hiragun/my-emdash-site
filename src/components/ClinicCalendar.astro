@@ -10,6 +10,52 @@ const days = [
   { day: "日", am: "休診", pm: "休診" },
 ];
 
+const japaneseHolidays = {
+  // 2026年
+  "2026-01-01": "元日",
+  "2026-01-12": "成人の日",
+  "2026-02-11": "建国記念の日",
+  "2026-02-23": "天皇誕生日",
+  "2026-03-20": "春分の日",
+  "2026-04-29": "昭和の日",
+  "2026-05-03": "憲法記念日",
+  "2026-05-04": "みどりの日",
+  "2026-05-05": "こどもの日",
+  "2026-05-06": "振替休日",
+  "2026-07-20": "海の日",
+  "2026-08-11": "山の日",
+  "2026-09-21": "敬老の日",
+  "2026-09-22": "国民の休日",
+  "2026-09-23": "秋分の日",
+  "2026-10-12": "スポーツの日",
+  "2026-11-03": "文化の日",
+  "2026-11-23": "勤労感謝の日",
+
+  // 2027年
+  "2027-01-01": "元日",
+  "2027-01-11": "成人の日",
+  "2027-02-11": "建国記念の日",
+  "2027-02-23": "天皇誕生日",
+  "2027-03-21": "春分の日",
+  "2027-03-22": "振替休日",
+  "2027-04-29": "昭和の日",
+  "2027-05-03": "憲法記念日",
+  "2027-05-04": "みどりの日",
+  "2027-05-05": "こどもの日",
+  "2027-07-19": "海の日",
+  "2027-08-11": "山の日",
+  "2027-09-20": "敬老の日",
+  "2027-09-23": "秋分の日",
+  "2027-10-11": "スポーツの日",
+  "2027-11-03": "文化の日",
+  "2027-11-23": "勤労感謝の日",
+};
+
+const getHolidayName = (year: number, month: number, day: number) => {
+  const key = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  return (japaneseHolidays as Record<string, string>)[key] ?? null;
+};
+
 const dateParts = new Intl.DateTimeFormat("ja-JP", {
   timeZone: "Asia/Tokyo",
   year: "numeric",
@@ -107,11 +153,21 @@ const nextCalendarCells = Array.from(
           <div class="monthly-calendar-weekday">{day}</div>
         ))}
 
-        {calendarCells.map((day) => (
-          <div class="monthly-calendar-day">
-            {day ?? ""}
-          </div>
-        ))}
+       
+{calendarCells.map((day, index) => (
+  <div class="monthly-calendar-day">
+    {day ?? ""}
+
+    {day !== null &&
+      (index % 7 === 0 ||
+        getHolidayName(currentYear, currentMonth, day)) && (
+        <div class="calendar-closed">
+          {getHolidayName(currentYear, currentMonth, day) ?? "日曜"}・休診
+        </div>
+      )}
+  </div>
+))}
+
       </div>
     </div>
 
@@ -123,11 +179,21 @@ const nextCalendarCells = Array.from(
           <div class="monthly-calendar-weekday">{day}</div>
         ))}
 
-        {nextCalendarCells.map((day) => (
-          <div class="monthly-calendar-day">
-            {day ?? ""}
-          </div>
-        ))}
+        
+{nextCalendarCells.map((day, index) => (
+  <div class="monthly-calendar-day">
+    {day ?? ""}
+
+    {day !== null &&
+      (index % 7 === 0 ||
+        getHolidayName(nextYear, nextMonth, day)) && (
+        <div class="calendar-closed">
+          {getHolidayName(nextYear, nextMonth, day) ?? "日曜"}・休診
+        </div>
+      )}
+  </div>
+))}
+
       </div>
     </div>
   </div>
@@ -258,6 +324,27 @@ const nextCalendarCells = Array.from(
   .monthly-calendar-switch button:focus-visible {
     outline: 2px solid #333;
     outline-offset: 3px;
+  }
+
+  /* 日曜日・祝日の休診表示 */
+  .monthly-calendar-day:has(.calendar-closed) {
+    background: #fff2f1;
+    border-color: #ebcbc8;
+  }
+
+  .calendar-closed {
+    margin-top: 8px;
+    color: #a24040;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 600px) {
+    .calendar-closed {
+      font-size: 0.7rem;
+      margin-top: 4px;
+    }
   }
 
 </style>
