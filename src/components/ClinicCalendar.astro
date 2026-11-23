@@ -36,6 +36,26 @@ const calendarCells = Array.from(
   (_, i) => i < firstWeekday ? null : i - firstWeekday + 1
 );
 
+const nextMonthDate = new Date(
+  Date.UTC(currentYear, currentMonth, 1)
+);
+
+const nextYear = nextMonthDate.getUTCFullYear();
+const nextMonth = nextMonthDate.getUTCMonth() + 1;
+
+const nextFirstWeekday = new Date(
+  Date.UTC(nextYear, nextMonth - 1, 1)
+).getUTCDay();
+
+const nextDaysInMonth = new Date(
+  Date.UTC(nextYear, nextMonth, 0)
+).getUTCDate();
+
+const nextCalendarCells = Array.from(
+  { length: nextFirstWeekday + nextDaysInMonth },
+  (_, i) => i < nextFirstWeekday ? null : i - nextFirstWeekday + 1
+);
+
 ---
 
 <section class="clinic-calendar">
@@ -68,21 +88,50 @@ const calendarCells = Array.from(
     休日当番や臨時の診療変更は別途お知らせします。
   </p>
 
+  
   <div class="monthly-calendar">
-    <h3>{currentYear}年{currentMonth}月の診療カレンダー</h3>
+    <div class="monthly-calendar-switch">
+      <button type="button" data-month="current" aria-pressed="true">
+        今月（{currentMonth}月）
+      </button>
+      <button type="button" data-month="next" aria-pressed="false">
+        翌月（{nextMonth}月）
+      </button>
+    </div>
 
-    <div class="monthly-calendar-grid">
-      {["日", "月", "火", "水", "木", "金", "土"].map((day) => (
-        <div class="monthly-calendar-weekday">{day}</div>
-      ))}
+    <div data-month-panel="current">
+      <h3>{currentYear}年{currentMonth}月の診療カレンダー</h3>
 
-      {calendarCells.map((day) => (
-        <div class="monthly-calendar-day">
-          {day ?? ""}
-        </div>
-      ))}
+      <div class="monthly-calendar-grid">
+        {["日", "月", "火", "水", "木", "金", "土"].map((day) => (
+          <div class="monthly-calendar-weekday">{day}</div>
+        ))}
+
+        {calendarCells.map((day) => (
+          <div class="monthly-calendar-day">
+            {day ?? ""}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <div data-month-panel="next" hidden>
+      <h3>{nextYear}年{nextMonth}月の診療カレンダー</h3>
+
+      <div class="monthly-calendar-grid">
+        {["日", "月", "火", "水", "木", "金", "土"].map((day) => (
+          <div class="monthly-calendar-weekday">{day}</div>
+        ))}
+
+        {nextCalendarCells.map((day) => (
+          <div class="monthly-calendar-day">
+            {day ?? ""}
+          </div>
+        ))}
+      </div>
     </div>
   </div>
+
 
 </section>
 
@@ -183,3 +232,27 @@ const calendarCells = Array.from(
   }
 
 </style>
+
+<script>
+  document.querySelectorAll(".monthly-calendar").forEach((calendar) => {
+    const buttons = calendar.querySelectorAll("button[data-month]");
+    const panels = calendar.querySelectorAll("[data-month-panel]");
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        const selected = button.getAttribute("data-month");
+
+        panels.forEach((panel) => {
+          panel.toggleAttribute(
+            "hidden",
+            panel.getAttribute("data-month-panel") !== selected
+          );
+        });
+
+        buttons.forEach((item) => {
+          item.setAttribute("aria-pressed", String(item === button));
+        });
+      });
+    });
+  });
+</script>
