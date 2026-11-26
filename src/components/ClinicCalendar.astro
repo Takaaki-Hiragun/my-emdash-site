@@ -239,10 +239,15 @@ const nextCalendarCells = Array.from(
 
 {day !== null &&
   getChangesForDay(currentYear, currentMonth, day).map(
-    (change) => (
-      <div class="calendar-change">
-        {change.target}：{change.changeType}
-        {change.note && (
+    (change) => (    
+  <div class={
+    change.target === "クリニック全体" &&
+    ["午前休診", "午後休診", "終日休診"].includes(change.changeType)
+      ? "calendar-change calendar-change--closed"
+      : "calendar-change"
+  }>
+    {change.target}：{change.changeType}
+    {change.note && (
           <div class="calendar-change-note">
             {change.note}
           </div>
@@ -283,7 +288,14 @@ const nextCalendarCells = Array.from(
 {day !== null &&
   getChangesForDay(nextYear, nextMonth, day).map(
     (change) => (
-      <div class="calendar-change">
+    
+<div class={
+  change.target === "クリニック全体" &&
+  ["午前休診", "午後休診", "終日休診"].includes(change.changeType)
+    ? "calendar-change calendar-change--closed"
+    : "calendar-change"
+}>
+  
         {change.target}：{change.changeType}
         {change.note && (
           <div class="calendar-change-note">
@@ -480,6 +492,17 @@ const nextCalendarCells = Array.from(
     font-weight: normal;
     color: #45657d;
   }
+
+/* クリニック全体の休診 */
+.calendar-change--closed {
+  background: #fff0ee;
+  border-left-color: #c45858;
+  color: #a33d3d;
+}
+
+.calendar-change--closed .calendar-change-note {
+  color: #a35b58;
+}
 
   @media (max-width: 600px) {
     .calendar-change {
