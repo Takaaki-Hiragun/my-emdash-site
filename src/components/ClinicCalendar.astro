@@ -67,6 +67,18 @@ const getChangesForDay = (
   return changesByDate.get(key) ?? [];
 };
 
+const isHolidayDuty = (
+  year: number,
+  month: number,
+  day: number
+): boolean => {
+  return getChangesForDay(year, month, day).some(
+    (change) =>
+      change.target === "クリニック全体" &&
+      change.changeType === "休日当番"
+  );
+};
+
 const days = [
   { day: "月", am: "院長・副院長", pm: "院長" },
   { day: "火", am: "院長・副院長", pm: "院長" },
@@ -239,9 +251,12 @@ const nextCalendarCells = Array.from(
     )
   )}
 
-    {day !== null &&
-      (index % 7 === 0 ||
-        getHolidayName(currentYear, currentMonth, day)) && (
+    
+{day !== null &&
+  !isHolidayDuty(currentYear, currentMonth, day) &&
+  (index % 7 === 0 ||
+    getHolidayName(currentYear, currentMonth, day)) && (
+
         <div class="calendar-closed">
           {getHolidayName(currentYear, currentMonth, day) ?? "日曜"}・休診
         </div>
@@ -279,9 +294,12 @@ const nextCalendarCells = Array.from(
     )
   )}
 
-    {day !== null &&
-      (index % 7 === 0 ||
-        getHolidayName(nextYear, nextMonth, day)) && (
+    
+{day !== null &&
+  !isHolidayDuty(nextYear, nextMonth, day) &&
+  (index % 7 === 0 ||
+    getHolidayName(nextYear, nextMonth, day)) && (
+
         <div class="calendar-closed">
           {getHolidayName(nextYear, nextMonth, day) ?? "日曜"}・休診
         </div>
