@@ -187,6 +187,11 @@ const nextCalendarCells = Array.from(
   <h2>診療時間・担当医</h2>
   <p>通常の診療担当</p>
 
+<p class="regular-clinic-hours">
+  <strong>通常の診療時間</strong>：
+  午前 9:00〜12:30 ／ 午後 15:00〜17:30
+</p>
+
   <div class="table-scroll">
     <table>
       <thead>
@@ -207,6 +212,18 @@ const nextCalendarCells = Array.from(
       </tbody>
     </table>
   </div>
+
+<div class="clinic-staff-mobile">
+  {days.map((d) => (
+    <div class="clinic-staff-mobile-row">
+      <strong>{d.day}曜日</strong>
+      <div>
+        <div>午前：{d.am}</div>
+        <div>午後：{d.pm}</div>
+      </div>
+    </div>
+  ))}
+</div>
 
   <p class="note">
     日曜・祝日は原則休診です。
@@ -662,6 +679,43 @@ const nextCalendarCells = Array.from(
 .monthly-calendar-weekday {
   background-color: #f1f3f1;
   color: #242424;
+}
+
+/* パソコンでは曜日別の縦型担当表を非表示 */
+.clinic-staff-mobile {
+  display: none;
+}
+
+/* スマートフォン用の診療担当表 */
+@media (max-width: 600px) {
+  /* 横長の担当表を非表示 */
+  .clinic-calendar .table-scroll {
+    display: none;
+  }
+
+  /* 曜日別の担当表を表示 */
+  .clinic-staff-mobile {
+    display: block;
+    margin-top: 16px;
+  }
+
+  .clinic-staff-mobile-row {
+    display: grid;
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 12px;
+    padding: 12px 4px;
+    border-bottom: 1px solid rgba(128, 128, 128, 0.25);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .clinic-staff-mobile-row strong {
+    white-space: nowrap;
+  }
+
+  .regular-clinic-hours {
+    line-height: 1.8;
+  }
 }
 
 </style>
