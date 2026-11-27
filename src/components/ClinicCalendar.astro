@@ -270,6 +270,38 @@ const nextCalendarCells = Array.from(
 ))}
 
       </div>
+  
+<div class="calendar-mobile-details">
+  <h4>診療予定の変更</h4>
+
+  {calendarCells.map((day) =>
+    day !== null &&
+    getChangesForDay(currentYear, currentMonth, day).length > 0 && (
+      <div class="calendar-mobile-entry">
+        <strong>{currentMonth}月{day}日</strong>
+
+        {getChangesForDay(currentYear, currentMonth, day).map(
+          (change) => (
+            <div class={
+              change.target === "クリニック全体" &&
+              ["午前休診", "午後休診", "終日休診"].includes(change.changeType)
+                ? "calendar-change calendar-change--closed"
+                : "calendar-change"
+            }>
+              {change.target}：{change.changeType}
+              {change.note && (
+                <div class="calendar-change-note">
+                  {change.note}
+                </div>
+              )}
+            </div>
+          )
+        )}
+      </div>
+    )
+  )}
+</div>
+
     </div>
 
     <div data-month-panel="next" hidden>
@@ -320,6 +352,38 @@ const nextCalendarCells = Array.from(
 ))}
 
       </div>
+
+<div class="calendar-mobile-details">
+  <h4>診療予定の変更</h4>
+
+  {nextCalendarCells.map((day) =>
+    day !== null &&
+    getChangesForDay(nextYear, nextMonth, day).length > 0 && (
+      <div class="calendar-mobile-entry">
+        <strong>{nextMonth}月{day}日</strong>
+
+        {getChangesForDay(nextYear, nextMonth, day).map(
+          (change) => (
+            <div class={
+              change.target === "クリニック全体" &&
+              ["午前休診", "午後休診", "終日休診"].includes(change.changeType)
+                ? "calendar-change calendar-change--closed"
+                : "calendar-change"
+            }>
+              {change.target}：{change.changeType}
+              {change.note && (
+                <div class="calendar-change-note">
+                  {change.note}
+                </div>
+              )}
+            </div>
+          )
+        )}
+      </div>
+    )
+  )}
+</div>
+
     </div>
   </div>
 
@@ -510,6 +574,89 @@ const nextCalendarCells = Array.from(
       font-size: 0.7rem;
     }
   }
+
+/* スマートフォン用のコンパクトなカレンダー */
+@media (max-width: 600px) {
+  .monthly-calendar-day {
+    height: 48px;
+    min-height: 48px;
+    padding: 5px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 3px;
+    font-size: 0.8rem;
+  }
+
+  /* 日付枠内の長い文章は非表示 */
+  .monthly-calendar-day > .calendar-change,
+  .monthly-calendar-day > .calendar-closed {
+    display: none;
+  }
+
+  /* 日曜日・祝日は日付を赤色に */
+  .monthly-calendar-day:nth-child(7n + 1),
+  .monthly-calendar-day:has(.calendar-closed) {
+    color: #a33d3d;
+  }
+
+  /* 診療予定の変更がある日は青い印 */
+  .monthly-calendar-day:has(.calendar-change)::after {
+    content: "";
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: #5683ad;
+  }
+
+  /* 休診の変更は赤い印 */
+  .monthly-calendar-day:has(.calendar-change--closed)::after {
+    background: #c45858;
+  }
+}
+
+/* パソコンでは詳細一覧を非表示 */
+.calendar-mobile-details {
+  display: none;
+}
+
+/* スマートフォンでは詳細一覧を表示 */
+@media (max-width: 600px) {
+  .calendar-mobile-details {
+    display: block;
+    margin-top: 24px;
+  }
+
+  .calendar-mobile-details h4 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+  }
+
+  .calendar-mobile-entry {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    column-gap: 8px;
+    row-gap: 6px;
+    padding: 12px 0;
+    border-bottom: 1px solid #e5e7eb;
+    align-items: start;
+  }
+
+  .calendar-mobile-entry > strong {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 0.8rem;
+    padding-top: 6px;
+  }
+
+  .calendar-mobile-entry > .calendar-change {
+    grid-column: 2;
+    margin-top: 0;
+    min-width: 0;
+  }
+}
 
 </style>
 
