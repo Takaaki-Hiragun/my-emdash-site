@@ -185,6 +185,31 @@ const year = new Date().getFullYear();
 						</nav>
 					)
 				}
+
+<details class="site-nav-mobile">
+  <summary>☰ メニュー</summary>
+  <nav aria-label="スマートフォン用メニュー">
+    <ul>
+      {menuItems.map((item) => (
+        <li>
+          <a
+            href={item.url}
+            target={item.target}
+            rel={
+              item.target === "_blank"
+                ? "noopener noreferrer"
+                : undefined
+            }
+            aria-current={navCurrent(item.url)}
+          >
+            {item.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</details>
+
 				<div class="site-header__actions">
 					<a href="tel:0825028010" class="header-phone">
     					<span>電話</span>
@@ -1505,6 +1530,56 @@ const year = new Date().getFullYear();
 					max-width: 9rem;
 				}
 			}
+
+/* スマートフォン用メニュー */
+.site-nav-mobile {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .site-nav {
+    display: none;
+  }
+
+  .site-nav-mobile {
+    display: block;
+    flex-basis: 100%;
+    order: 1;
+  }
+
+  .site-nav-mobile summary {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  .site-nav-mobile summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .site-nav-mobile ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-nav-mobile a {
+    display: block;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+}
+
 		</style>
 
 		<script>
