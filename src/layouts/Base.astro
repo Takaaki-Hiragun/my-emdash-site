@@ -1580,6 +1580,17 @@ const year = new Date().getFullYear();
   }
 }
 
+/* スマートフォンのヘッダー配置調整 */
+@media (max-width: 720px) {
+  .site-nav-mobile:not([open]) {
+    flex-basis: auto;
+  }
+
+  .site-header__actions {
+    order: 2;
+  }
+}
+
 		</style>
 
 		<script>
