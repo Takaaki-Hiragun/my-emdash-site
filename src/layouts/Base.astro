@@ -206,6 +206,13 @@ const year = new Date().getFullYear();
           </a>
         </li>
       ))}
+
+{isLoggedIn && (
+  <li>
+    <a href="/_emdash/admin">管理画面</a>
+  </li>
+)}
+
     </ul>
   </nav>
 </details>
@@ -1580,14 +1587,49 @@ const year = new Date().getFullYear();
   }
 }
 
-/* スマートフォンのヘッダー配置調整 */
+
+
+/* スマートフォンのヘッダーを2段に整理 */
 @media (max-width: 720px) {
-  .site-nav-mobile:not([open]) {
-    flex-basis: auto;
+  .site-header__inner {
+    position: relative;
+  }
+
+  .site-nav-mobile {
+    flex: 0 0 auto;
+    order: 1;
   }
 
   .site-header__actions {
     order: 2;
+    margin-inline-start: auto;
+    gap: 6px;
+  }
+
+  /* 管理画面への入口はメニュー内に移す */
+  .site-header__actions > a[href="/_emdash/admin"] {
+    display: none;
+  }
+
+  /* 電話番号をコンパクトに */
+  .header-phone > span {
+    display: none;
+  }
+
+  .header-phone strong {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  /* 開いたメニューをヘッダーの下に表示 */
+  .site-nav-mobile nav {
+    position: absolute;
+    inset-inline: 0;
+    top: 100%;
+    padding: 10px 12px;
+    background: var(--color-surface);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+    z-index: 20;
   }
 }
 
